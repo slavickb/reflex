@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import tkinter as tk
+from typing import Optional
 from functools import partial
 from time import perf_counter
 from threading import Timer
@@ -9,7 +10,9 @@ import conf
 
 class Keypad:
     """pole tlačítek aplikace"""
-    def __init__(self, window, pocet_tlacitek, strana, radek, promenna_casu):
+    def __init__(self, window: tk.Tk,
+                 pocet_tlacitek: int, strana: int, radek: int,
+                 promenna_casu: tk.StringVar):
         self.window = window
         self.cas = promenna_casu
         self.pocet = pocet_tlacitek
@@ -24,8 +27,8 @@ class Keypad:
                               text=str(i),
                               background="#FFFFFF",
                               activebackground="#FFFFFF",
-                              command=lambda i=i:
-                                  self.stisk(i))
+                              command=lambda i=i:   # type: ignore
+                              self.stisk(i, None))
                 self.window.bind(f"{i}",
                                  partial(self.stisk,
                                          i))
@@ -34,7 +37,7 @@ class Keypad:
                                          i))
             else:
                 t = tk.Button(self.window,
-                              text=None,
+                              text="",
                               background="#FFFFFF",
                               activebackground="#FFFFFF",
                               command=partial(self.stisk,
@@ -48,14 +51,14 @@ class Keypad:
                 self.sloupec = 1
                 self.radek -= 1
 
-    def stisk(self, cislo_klavesy, event=None):
+    def stisk(self, cislo_klavesy: int, event: Optional[tk.EventType]) -> None:
         self.stisknute_tlacitko = cislo_klavesy
         if (self.stisknute_tlacitko == conf.zbarvene_tlacitko+1
            and conf.zmacknuto is False):
             self.posledni_cas = perf_counter()-conf.start_cas
             conf.posledni_cas = int(round(self.posledni_cas, 3)*1000)
             self.cas.set(f"Poslední čas: {conf.posledni_cas} ms")
-            self.prebarvit(conf.zbarvene_tlacitko, "#00FF00")
+            self.prebarvit(conf.zbarvene_tlacitko, "#00FF00", False)
             conf.zmacknuto = True
             Timer(1,
                   lambda:
@@ -64,7 +67,7 @@ class Keypad:
                                      True)
                   ).start()
 
-    def prebarvit(self, klavesa, barva, konec=False):
+    def prebarvit(self, klavesa: int, barva: str, konec: bool) -> None:
         self.cislo_klavesy = klavesa
         self.barva = barva
         self.keys[self.cislo_klavesy].config(background=str(self.barva),

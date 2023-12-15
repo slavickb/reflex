@@ -1,17 +1,19 @@
 #! /usr/bin/env python
 
 import tkinter as tk
+from typing import Optional
 from functools import partial
 import conf
 
 
 class StartApp:
     """Startovní okno aplikace"""
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_window = tk.Tk()
         self.start_window.title("Startup")
         self.popis = tk.Label(self.start_window,
-                              text="Vítejte v programu na testování vašich reflexů!\n"
+                              text="Vítejte v programu na testování vašich "
+                              "reflexů!\n"
                               "Máme pro vás několik testů:"
                               ).grid(row=1,
                                      columnspan=3,
@@ -19,19 +21,19 @@ class StartApp:
         self.moznost1 = tk.Button(self.start_window,
                                   text="Pouze rychlost odezvy!",
                                   command=lambda:
-                                      self.volba(1)
+                                      self.volba(1, None)
                                   ).grid(row=2,
                                          column=1)
         self.moznost2 = tk.Button(self.start_window,
                                   text="Numerická klávesnice!",
                                   command=lambda:
-                                      self.volba(2)
+                                      self.volba(2, None)
                                   ).grid(row=2,
                                          column=2)
         self.moznost3 = tk.Button(self.start_window,
                                   text="Myš!",
                                   command=lambda:
-                                      self.volba(3)
+                                      self.volba(3, None)
                                   ).grid(row=2,
                                          column=3)
 
@@ -46,6 +48,6 @@ class StartApp:
                                    partial(self.volba,
                                            i))
 
-    def volba(self, volba, event=None):
+    def volba(self, volba: int, event: Optional[tk.EventType]) -> None:
         conf.start_volba = volba
         self.start_window.destroy()
